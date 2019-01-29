@@ -11,7 +11,7 @@ var pointermap = dispatcher.pointermap;
 // This should be long enough to ignore compat mouse events made by touch
 var DEDUP_TIMEOUT = 2500;
 var CLICK_COUNT_TIMEOUT = 200;
-var ATTRIB = 'touch-action';
+var ATTRIB = 'data-pep';
 var INSTALLER;
 
 // handler block for native touch events
@@ -26,14 +26,11 @@ var touchEvents = {
     INSTALLER.enableOnSubtree(target);
   },
   unregister: function() {
-
     // TODO(dfreedman): is it worth it to disconnect the MO?
   },
   elementAdded: function(el) {
     var a = el.getAttribute(ATTRIB);
-    var st = this.touchActionToScrollType(a);
-    if (st) {
-      el._scrollType = st;
+    if (a) {
       dispatcher.listen(el, this.events);
 
       // set touch-action on shadows as well
@@ -44,7 +41,6 @@ var touchEvents = {
     }
   },
   elementRemoved: function(el) {
-    el._scrollType = undefined;
     dispatcher.unlisten(el, this.events);
 
     // remove touch-action from shadow
@@ -55,38 +51,13 @@ var touchEvents = {
   },
   elementChanged: function(el, oldValue) {
     var a = el.getAttribute(ATTRIB);
-    var st = this.touchActionToScrollType(a);
-    var oldSt = this.touchActionToScrollType(oldValue);
-
-    // simply update scrollType if listeners are already established
-    if (st && oldSt) {
-      el._scrollType = st;
-      allShadows(el).forEach(function(s) {
-        s._scrollType = st;
-      }, this);
-    } else if (oldSt) {
-      this.elementRemoved(el);
-    } else if (st) {
-      this.elementAdded(el);
+    if (a === oldValue) {
+      return;
     }
-  },
-  scrollTypes: {
-    EMITTER: 'none',
-    XSCROLLER: 'pan-x',
-    YSCROLLER: 'pan-y',
-    SCROLLER: /^(?:pan-x pan-y)|(?:pan-y pan-x)|auto$/
-  },
-  touchActionToScrollType: function(touchAction) {
-    var t = touchAction;
-    var st = this.scrollTypes;
-    if (t === 'none') {
-      return 'none';
-    } else if (t === st.XSCROLLER) {
-      return 'X';
-    } else if (t === st.YSCROLLER) {
-      return 'Y';
-    } else if (st.SCROLLER.exec(t)) {
-      return 'XY';
+    if (a) {
+      this.elementAdded(el);
+    } else {
+      this.elementRemoved(el);
     }
   },
   POINTER_TYPE: 'touch',

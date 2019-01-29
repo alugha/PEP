@@ -3,7 +3,7 @@
  * generate Pointer Events.
  *
  * All nodes that wish to generate Pointer Events must have the attribute
- * `touch-action` set to `none`.
+ * `data-pep` set.
  */
 import targeting from './targeting';
 
@@ -74,7 +74,7 @@ Installer.prototype = {
     return accum.concat(toArray(list));
   },
 
-  // register all touch-action = none nodes on document load
+  // register all data-pep nodes on document load
   installOnLoad: function() {
     document.addEventListener('readystatechange', function() {
       if (document.readyState === 'complete') {
@@ -87,7 +87,7 @@ Installer.prototype = {
   },
   flattenMutationTree: function(inNodes) {
 
-    // find children with touch-action
+    // find children with data-pep
     var tree = map(inNodes, this.findElements, this);
 
     // make sure the added nodes are accounted for
