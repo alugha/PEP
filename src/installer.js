@@ -12,13 +12,13 @@ var map = Array.prototype.map.call.bind(Array.prototype.map);
 var toArray = Array.prototype.slice.call.bind(Array.prototype.slice);
 var filter = Array.prototype.filter.call.bind(Array.prototype.filter);
 var MO = window.MutationObserver || window.WebKitMutationObserver;
-var SELECTOR = '[touch-action]';
+var SELECTOR = '[data-pep]';
 var OBSERVER_INIT = {
   subtree: true,
   childList: true,
   attributes: true,
   attributeOldValue: true,
-  attributeFilter: ['touch-action']
+  attributeFilter: ['data-pep']
 };
 
 function Installer(add, remove, changed, binder) {
