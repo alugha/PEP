@@ -35,7 +35,6 @@ var touchEvents = {
 
       // set touch-action on shadows as well
       allShadows(el).forEach(function(s) {
-        s._scrollType = st;
         dispatcher.listen(s, this.events);
       }, this);
     }
@@ -45,7 +44,6 @@ var touchEvents = {
 
     // remove touch-action from shadow
     allShadows(el).forEach(function(s) {
-      s._scrollType = undefined;
       dispatcher.unlisten(s, this.events);
     }, this);
   },
@@ -151,31 +149,8 @@ var touchEvents = {
   // pointer events or behave as a scroller
   shouldScroll: function(inEvent) {
     if (this.firstXY) {
-      var ret;
-      var scrollAxis = inEvent.currentTarget._scrollType;
-      if (scrollAxis === 'none') {
-
-        // this element is a touch-action: none, should never scroll
-        ret = false;
-      } else if (scrollAxis === 'XY') {
-
-        // this element should always scroll
-        ret = true;
-      } else {
-        var t = inEvent.changedTouches[0];
-
-        // check the intended scroll axis, and other axis
-        var a = scrollAxis;
-        var oa = scrollAxis === 'Y' ? 'X' : 'Y';
-        var da = Math.abs(t['client' + a] - this.firstXY[a]);
-        var doa = Math.abs(t['client' + oa] - this.firstXY[oa]);
-
-        // if delta in the scroll axis > delta other axis, scroll instead of
-        // making events
-        ret = da >= doa;
-      }
       this.firstXY = null;
-      return ret;
+      return false;
     }
   },
   findTouch: function(inTL, inId) {
